@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Overview — Nexus{% endblock %}
+{% block page_title %}⚡ Overview{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card fade-in fade-in-1" style="--accent-glow: rgba(88,101,242,0.1)">
+    <span class="stat-icon">👥</span>
+    <div class="stat-value">{{ total_users }}</div>
+    <div class="stat-label">Total Users</div>
+  </div>
+  <div class="stat-card fade-in fade-in-2" style="--accent-glow: rgba(87,242,135,0.08)">
+    <span class="stat-icon">🪙</span>
+    <div class="stat-value">{{ "{:,.0f}".format(total_balance) }}</div>
+    <div class="stat-label">Coins in Circulation</div>
+  </div>
+  <div class="stat-card fade-in fade-in-3" style="--accent-glow: rgba(254,231,92,0.08)">
+    <span class="stat-icon">⏳</span>
+    <div class="stat-value">{{ pending_withdrawals }}</div>
+    <div class="stat-label">Pending Withdrawals</div>
+  </div>
+  <div class="stat-card fade-in fade-in-4" style="--accent-glow: rgba(114,137,218,0.08)">
+    <span class="stat-icon">🎫</span>
+    <div class="stat-value">{{ open_tickets }}</div>
+    <div class="stat-label">Open Tickets</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <!-- Transaction Chart -->
+  <div class="card fade-in fade-in-2">
+    <div class="card-title">📈 Transaction Volume (7 days)</div>
+    <canvas id="txChart" style="width:100%; height:120px; display:block;"></canvas>
+  </div>
+
+  <!-- Recent Logs -->
+  <div class="card fade-in fade-in-3">
+    <div class="card-title">📋 Recent Activity</div>
+    {% if recent_logs %}
+      {% for log in recent_logs %}
+      <div class="log-item">
+        <div class="log-dot"></div>
+        <div class="log-action">
+          <strong>{{ log.action.replace('_',' ').title() }}</strong>
+          {% if log.user_id %} — <span class="mono">{{ log.user_id }}</span>{% endif %}
+          {% if log.details %} <span style="color:var(--text-3)">· {{ log.details[:40] }}</span>{% endif %}
+        </div>
+        <div class="log-time">{{ log.timestamp[:16] }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div style="color:var(--text-3); font-size:0.9rem; text-align:center; padding:20px 0;">No activity yet.</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Quick Actions -->
+{% if is_owner %}
+<div class="card fade-in">
+  <div class="card-title">⚡ Quick Actions</div>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <a href="/withdrawals?status=pending" class="btn btn-primary">💸 Review Pending Withdrawals</a>
+    <a href="/users" class="btn btn-ghost">👥 Manage Users</a>
+    <a href="/settings" class="btn btn-ghost">⚙️ Settings</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

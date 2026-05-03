@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Users — Nexus{% endblock %}
+{% block page_title %}👥 Users{% endblock %}
+
+{% block content %}
+<div class="search-row">
+  <form method="get" style="display:flex;gap:10px;flex:1;">
+    <input class="input" name="q" placeholder="🔍 Search by User ID..."
+           value="{{ search }}" style="max-width:320px;" />
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if search %}<a href="/users" class="btn btn-ghost">✕ Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="card fade-in">
+  <div class="card-title">
+    🪙 User Wallets
+    <span style="margin-left:auto;font-size:0.8rem;color:var(--text-3);">{{ users|length }} users</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Guild ID</th>
+          <th>Coins</th>
+          <th>₹ INR</th>
+          <th>LTC</th>
+          <th>Hold (Coins)</th>
+          <th>Hold ₹</th>
+          <th>Invites</th>
+          {% if is_owner %}<th>Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td><span class="mono">{{ u['user_id'] }}</span></td>
+          <td><span class="mono" style="font-size:0.78rem;">{{ u['guild_id'] }}</span></td>
+          <td><strong>{{ "{:,.2f}".format(u['balance']) }}</strong> 🪙</td>
+          <td style="color:#FF9933;font-weight:600;">₹{{ "{:,.2f}".format(u['balance'] * 0.01) }}</td>
+          <td style="color:#B5B5B5;font-size:0.82rem;">{{ "%.6f"|format(u['balance'] * 0.000001) }}</td>
+          <td>{{ "{:,.2f}".format(u['hold_balance']) }} 🔒</td>
+          <td style="color:#FF9933;">₹{{ "{:,.2f}".format(u['hold_balance'] * 0.01) }}</td>
+          <td><span class="badge badge-blue">{{ u['invites'] }}</span></td>
+          {% if is_owner %}
+          <td>
+            <button class="btn btn-ghost btn-sm"
+              onclick="editBalance({{ u['user_id'] }}, {{ u['guild_id'] }}, {{ u['balance'] }})">
+              ✏️ Edit
+            </button>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="9" style="text-align:center;color:var(--text-3);padding:40px 0;">
+            No users found{% if search %} matching "{{ search }}"{% endif %}.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

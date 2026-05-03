@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Settings — Nexus{% endblock %}
+{% block page_title %}⚙️ Settings{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+  <div class="card-title">📋 Server Configurations</div>
+  {% if guilds %}
+    {% for g in guilds %}
+    <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;margin-bottom:16px;background:rgba(255,255,255,0.02);">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px;">
+        Guild <span class="mono">{{ g.guild_id }}</span>
+        {% if g.withdraw_paused %}<span class="badge badge-red" style="margin-left:10px;">⏸️ Withdrawals Paused</span>{% endif %}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div style="font-size:0.85rem;color:var(--text-2);">Prefix: <strong>{{ g.prefix }}</strong></div>
+        <div style="font-size:0.85rem;color:var(--text-2);">Log Channel: <span class="mono">{{ g.log_channel or '—' }}</span></div>
+        <div style="font-size:0.85rem;color:var(--text-2);">Earn Role: <span class="mono">{{ g.earn_role or '—' }}</span></div>
+        <div style="font-size:0.85rem;color:var(--text-2);">Ticket Channel: <span class="mono">{{ g.ticket_channel or '—' }}</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Earning Task Message</label>
+        <textarea class="input" id="task-{{ g.guild_id }}" style="min-height:90px;">{{ g.earn_task or '' }}</textarea>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveTask({{ g.guild_id }})">💾 Save Task</button>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="color:var(--text-3);text-align:center;padding:28px;">No guild configurations found.</div>
+  {% endif %}
+</div>
+{% endblock %}

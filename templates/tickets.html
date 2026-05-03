@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Tickets — Nexus{% endblock %}
+{% block page_title %}🎫 Tickets{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+  <div class="card-title">🎫 All Tickets</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Channel ID</th>
+          <th>User ID</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tickets %}
+        <tr>
+          <td><span class="mono">#{{ t.id }}</span></td>
+          <td><span class="mono">{{ t.channel_id }}</span></td>
+          <td><span class="mono">{{ t.user_id }}</span></td>
+          <td>
+            {% if t.ticket_type == 'support' %}<span class="badge badge-blue">🛠️ Support</span>
+            {% elif t.ticket_type == 'payment' %}<span class="badge badge-green">💳 Payment</span>
+            {% elif t.ticket_type == 'earning' %}<span class="badge badge-yellow" style="--yellow:#f0c040">💰 Earning</span>
+            {% else %}<span class="badge badge-blue">{{ t.ticket_type }}</span>{% endif %}
+          </td>
+          <td>
+            {% if t.status == 'open' %}<span class="badge badge-green">🟢 Open</span>
+            {% else %}<span class="badge badge-red">🔴 Closed</span>{% endif %}
+          </td>
+          <td style="color:var(--text-3); font-size:0.82rem;">{{ t.created_at[:16] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:28px;">No tickets yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

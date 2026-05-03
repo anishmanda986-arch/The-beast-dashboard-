@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Error — Nexus{% endblock %}
+{% block page_title %}⚠️ Error{% endblock %}
+{% block content %}
+<div class="card fade-in" style="text-align:center;padding:48px;">
+  <div style="font-size:3rem;margin-bottom:16px;">⚠️</div>
+  <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:10px;">Access Denied</div>
+  <div style="color:var(--text-2);margin-bottom:24px;">{{ msg or "You do not have permission to view this page." }}</div>
+  <a href="/dashboard" class="btn btn-primary">← Back to Dashboard</a>
+</div>
+{% endblock %}

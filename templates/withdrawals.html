@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Withdrawals — Nexus{% endblock %}
+{% block page_title %}💸 Withdrawals{% endblock %}
+
+{% block content %}
+<div class="search-row">
+  <form method="get" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <span style="color:var(--text-3);font-size:0.85rem;font-weight:500;">Filter:</span>
+    {% for s in ['', 'pending', 'approved', 'rejected'] %}
+    <a href="/withdrawals{% if s %}?status={{ s }}{% endif %}"
+       class="btn btn-sm {% if status_filter == s %}btn-primary{% else %}btn-ghost{% endif %}">
+      {{ 'All' if not s else s.title() }}
+    </a>
+    {% endfor %}
+  </form>
+</div>
+
+<div class="card fade-in">
+  <div class="card-title">
+    💸 Withdrawal Requests
+    {% if status_filter %}
+      <span class="badge badge-blue" style="margin-left:8px;">{{ status_filter.title() }}</span>
+    {% endif %}
+    <span style="margin-left:auto;font-size:0.8rem;color:var(--text-3);">{{ withdrawals|length }} total</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#ID</th>
+          <th>User ID</th>
+          <th>Coins</th>
+          <th>INR Value</th>
+          <th>LTC Value</th>
+          <th>Method</th>
+          <th>Destination</th>
+          <th>Status</th>
+          <th>Date</th>
+          {% if is_owner %}<th>Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for w in withdrawals %}
+        <tr>
+          <td><span class="mono">#{{ w['id'] }}</span></td>
+          <td><span class="mono">{{ w['user_id'] }}</span></td>
+          <td><strong>{{ "{:,.2f}".format(w['amount']) }}</strong></td>
+          <td style="color:#FF9933;">₹{{ "{:,.2f}".format(w['amount'] * 0.01) }}</td>
+          <td style="color:#B5B5B5;">{{ "%.8f"|format(w['amount'] * 0.000001) }}</td>
+          <td>
+            {% if w['method'] == 'LTC' %}
+              <span class="badge badge-blue">🔗 LTC</span>
+            {% else %}
+              <span class="badge badge-green" style="color:#FF9933;border-color:rgba(255,153,51,0.3);background:rgba(255,153,51,0.1);">₹ INR</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="mono" style="font-size:0.78rem;" title="{{ w['address'] }}">
+              {{ w['address'][:22] }}{% if w['address']|length > 22 %}…{% endif %}
+            </span>
+          </td>
+          <td>
+            {% if w['status'] == 'pending' %}
+              <span class="badge badge-yellow">⏳ Pending</span>
+            {% elif w['status'] == 'approved' %}
+              <span class="badge badge-green">✅ Approved</span>
+            {% else %}
+              <span class="badge badge-red">❌ Rejected</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--text-3);font-size:0.82rem;">{{ w['created_at'][:16] }}</td>
+          {% if is_owner %}
+          <td>
+            {% if w['status'] == 'pending' %}
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-success btn-sm" onclick="approveWithdrawal({{ w['id'] }})">✅ Approve</button>
+              <button class="btn btn-danger btn-sm"  onclick="rejectWithdrawal({{ w['id'] }})">❌ Reject</button>
+            </div>
+            {% else %}
+              <span style="color:var(--text-3);font-size:0.8rem;">{{ w['note'][:25] if w['note'] else '—' }}</span>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="10" style="text-align:center;color:var(--text-3);padding:40px 0;">
+            No withdrawals found{% if status_filter %} with status "{{ status_filter }}"{% endif %}.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
