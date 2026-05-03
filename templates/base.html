@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Nexus Dashboard{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  {% if user %}
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">N</div>
+        <span class="brand-name">Nexus</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item {% if page == 'dashboard' %}active{% endif %}">
+          <span class="nav-icon">⚡</span>
+          <span>Overview</span>
+        </a>
+        <a href="/users" class="nav-item {% if page == 'users' %}active{% endif %}">
+          <span class="nav-icon">👥</span>
+          <span>Users</span>
+        </a>
+        <a href="/withdrawals" class="nav-item {% if page == 'withdrawals' %}active{% endif %}">
+          <span class="nav-icon">💸</span>
+          <span>Withdrawals</span>
+        </a>
+        <a href="/tickets" class="nav-item {% if page == 'tickets' %}active{% endif %}">
+          <span class="nav-icon">🎫</span>
+          <span>Tickets</span>
+        </a>
+        {% if is_owner %}
+        <a href="/settings" class="nav-item {% if page == 'settings' %}active{% endif %}">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+        {% endif %}
+      </nav>
+
+      <div class="sidebar-user">
+        <img
+          src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png"
+          onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'"
+          class="user-avatar" alt="avatar"
+        />
+        <div class="user-info">
+          <div class="user-name">{{ user.username }}</div>
+          <div class="user-tag">{% if is_owner %}👑 Owner{% else %}Staff{% endif %}</div>
+        </div>
+        <a href="/logout" class="logout-btn" title="Logout">⏻</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+        <div class="topbar-right">
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            Bot Online
+          </div>
+        </div>
+      </div>
+      <div class="content-area">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+  {% else %}
+    {% block landing %}{% endblock %}
+  {% endif %}
+
+  <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
